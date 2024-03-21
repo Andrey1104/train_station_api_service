@@ -3,7 +3,7 @@ import math
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from train_station_service.train_station_service import settings
+from train_station_service import settings
 
 
 class TrainType(models.Model):
@@ -47,12 +47,12 @@ class Route(models.Model):
     source = models.ForeignKey(
         Station,
         on_delete=models.CASCADE,
-        related_name="routes"
+        related_name="source_routes"
     )
     destination = models.ForeignKey(
         Station,
         on_delete=models.CASCADE,
-        related_name="routes"
+        related_name="destination_routes"
     )
 
     @property
