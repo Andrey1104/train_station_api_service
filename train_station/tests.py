@@ -1,5 +1,6 @@
 import tempfile
 import os
+
 from datetime import datetime
 
 from PIL import Image
@@ -142,7 +143,11 @@ class TrainImageUploadTests(TestCase):
             img = Image.new("RGB", (10, 10))
             img.save(ntf, format="JPEG")
             ntf.seek(0)
-            res = self.client.post(self.image_url, {"image": ntf}, format="multipart")
+            res = self.client.post(
+                self.image_url,
+                {"image": ntf},
+                format="multipart"
+            )
         self.train.refresh_from_db()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -152,7 +157,11 @@ class TrainImageUploadTests(TestCase):
     def test_upload_image_bad_request(self):
         """Test uploading an invalid image"""
         url = image_upload_url(self.train.id)
-        res = self.client.post(url, {"image": "not image"}, format="multipart")
+        res = self.client.post(
+            url,
+            {"image": "not image"},
+            format="multipart"
+        )
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -161,7 +170,11 @@ class TrainImageUploadTests(TestCase):
             img = Image.new("RGB", (10, 10))
             img.save(ntf, format="JPEG")
             ntf.seek(0)
-            self.client.post(self.image_url, {"image": ntf}, format="multipart")
+            self.client.post(
+                self.image_url,
+                {"image": ntf},
+                format="multipart"
+            )
         res = self.client.get(TRAIN_URL)
 
         self.assertIn("image", res.data[0].keys())
@@ -185,7 +198,10 @@ class TrainImageUploadTests(TestCase):
         url = detail_url(train_type.id)
         res = self.client.put(url, payload)
 
-        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST | status.HTTP_404_NOT_FOUND)
+        self.assertEqual(
+            res.status_code,
+            status.HTTP_400_BAD_REQUEST | status.HTTP_404_NOT_FOUND
+        )
 
     def test_delete_train_not_allowed(self):
         train_type = TrainType.objects.create(name="test10")

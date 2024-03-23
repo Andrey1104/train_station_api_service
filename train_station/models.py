@@ -116,8 +116,16 @@ class Crew(models.Model):
 
 
 class Trip(models.Model):
-    route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name="trips")
-    train = models.ForeignKey(Train, on_delete=models.CASCADE, related_name="trips")
+    route = models.ForeignKey(
+        Route,
+        on_delete=models.CASCADE,
+        related_name="trips"
+    )
+    train = models.ForeignKey(
+        Train,
+        on_delete=models.CASCADE,
+        related_name="trips"
+    )
     crew = models.ManyToManyField(Crew, blank=True)
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
@@ -142,8 +150,16 @@ class Order(models.Model):
 class Ticket(models.Model):
     cargo = models.IntegerField()
     seat = models.IntegerField()
-    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="tickets")
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="tickets")
+    trip = models.ForeignKey(
+        Trip,
+        on_delete=models.CASCADE,
+        related_name="tickets"
+    )
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="tickets"
+    )
 
     @staticmethod
     def validate_ticket(cargo_num, places_in_cargo, trip, error_to_raise):

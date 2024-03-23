@@ -14,7 +14,6 @@ from rest_framework.mixins import (
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-
 from rest_framework.viewsets import GenericViewSet
 
 from train_station.models import (
@@ -39,7 +38,8 @@ from train_station.serializer import (
     TripDetailSerializer,
     OrderListSerializer,
     RouteSerializer,
-    RouteListSerializer, TrainImageSerializer
+    RouteListSerializer,
+    TrainImageSerializer
 )
 
 
@@ -87,7 +87,10 @@ class TrainViewSet(
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class TripViewSet(viewsets.ModelViewSet):
