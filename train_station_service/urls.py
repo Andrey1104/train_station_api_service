@@ -1,3 +1,4 @@
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import (
@@ -5,6 +6,8 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
+
+from train_station_service import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -22,4 +25,4 @@ urlpatterns = [
         name="redoc",
     ),
     path("__debug__/", include("debug_toolbar.urls")),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

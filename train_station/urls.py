@@ -4,7 +4,6 @@ from rest_framework import routers
 from train_station.views import (
     TrainViewSet,
     TripViewSet,
-    TicketViewSet,
     TrainTypeViewSet,
     CrewViewSet,
     OrderViewSet,
@@ -18,7 +17,6 @@ router = routers.DefaultRouter()
 router.register("trains", TrainViewSet)
 router.register("train_types", TrainTypeViewSet)
 router.register("trips", TripViewSet)
-router.register("tickets", TicketViewSet)
 router.register("crews", CrewViewSet)
 router.register("orders", OrderViewSet)
 router.register("routes", RouteViewSet)

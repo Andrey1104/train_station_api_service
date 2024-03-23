@@ -1,7 +1,10 @@
 import math
+import os
+import uuid
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.text import slugify
 
 from train_station_service import settings
 
@@ -16,11 +19,23 @@ class TrainType(models.Model):
         ordering = ["name"]
 
 
+def train_image_file_path(instance, filename):
+    _, extension = os.path.splitext(filename)
+    filename = f"{slugify(instance.name)}-{uuid.uuid4()}{extension}"
+
+    return os.path.join("uploads/trains/", filename)
+
+
 class Train(models.Model):
     name = models.CharField(max_length=255, unique=True)
     cargo_num = models.IntegerField()
     places_in_cargo = models.IntegerField()
-    train_type = models.ForeignKey(TrainType, on_delete=models.CASCADE, related_name="trains")
+    train_type = models.ForeignKey(
+        TrainType,
+        on_delete=models.CASCADE,
+        related_name="trains"
+    )
+    image = models.ImageField(null=True, upload_to=train_image_file_path)
 
     def __str__(self) -> str:
         return f"{self.name}"
@@ -55,8 +70,11 @@ class Route(models.Model):
         related_name="destination_routes"
     )
 
+    class Meta:
+        unique_together = ["source", "destination"]
+
     @property
-    def distance(self) -> float:
+    def distance(self) -> str:
         radius_of_planet = 6371
         lat1, lon1, lat2, lon2 = map(math.radians, [
             self.source.latitude,
@@ -75,10 +93,11 @@ class Route(models.Model):
 
         distance = 2 * math.atan2(math.sqrt(temp), math.sqrt(1 - temp))
 
-        return round(radius_of_planet * distance)
+        return f"{round(radius_of_planet * distance)} km"
 
-    def __str__(self) -> str:
-        return f"{self.distance} km"
+    @property
+    def name(self) -> str:
+        return f"{self.source} - {self.destination}"
 
 
 class Crew(models.Model):
@@ -88,6 +107,10 @@ class Crew(models.Model):
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
     class Meta:
         ordering = ["first_name"]
 
@@ -95,6 +118,7 @@ class Crew(models.Model):
 class Trip(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name="trips")
     train = models.ForeignKey(Train, on_delete=models.CASCADE, related_name="trips")
+    crew = models.ManyToManyField(Crew, blank=True)
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
 
